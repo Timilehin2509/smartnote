@@ -15,6 +15,7 @@ import searchRoutes from './routes/search.js';
 import frontendAuthRoutes from './routes/frontendRoutes/auth.js';
 import frontendNotesRoutes from './routes/frontendRoutes/notes.js';
 import frontendCategoriesRoutes from './routes/frontendRoutes/categories.js';
+import homeRoutes from './routes/frontendRoutes/home.js';
 
 // Initialize Express app
 const app = express();
@@ -37,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(join(__dirname, '../../public')));
 
 // Frontend routes
+app.use('/', homeRoutes);
 app.use('/auth', frontendAuthRoutes);
 app.use('/notes', frontendNotesRoutes);
 app.use('/categories', frontendCategoriesRoutes);
