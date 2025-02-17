@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import expressLayouts from 'express-ejs-layouts';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -29,6 +30,8 @@ app.use(express.static(join(__dirname, '../../public')));
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', join(__dirname, '../../views'));
+app.set('layout', 'layouts/main');
+app.use(expressLayouts);
 
 // Routes
 app.use('/api/auth', authRoutes);
