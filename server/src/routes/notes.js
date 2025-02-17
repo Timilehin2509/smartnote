@@ -73,12 +73,23 @@ router.put('/:id', authMiddleware, async (req, res) => {
             return res.status(400).json({ error: "Title is required" });
         }
 
+        // Log the update attempt
+        console.log('Update attempt:', {
+            noteId,
+            userId: req.user.id,
+            title,
+            category_id,
+            tags
+        });
+
         const [result] = await pool.execute(
             `UPDATE notes SET 
                 title = ?, content = ?, cue_column = ?, summary = ?, 
                 category_id = ?, tags = ? 
             WHERE id = ? AND user_id = ?`,
-            [title.trim(), content, cue_column, summary, category_id, JSON.stringify(tags), noteId, req.user.id]
+            [title.trim(), content, cue_column, summary, category_id, 
+             Array.isArray(tags) ? JSON.stringify(tags) : null, 
+             noteId, req.user.id]
         );
 
         if (result.affectedRows === 0) {
@@ -87,14 +98,25 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
         res.json({ message: "Note updated successfully" });
     } catch (error) {
-        console.error('Update note error:', error);
+        // Enhanced error logging
+        console.error('Update note error details:', {
+            message: error.message,
+            code: error.code,
+            stack: error.stack
+        });
         res.status(500).json({ error: "Failed to update note" });
     }
 });
 
-// Delete note
+// Delete note with link cleanup
 router.delete('/:id', authMiddleware, async (req, res) => {
     try {
+        // Delete note links first
+        await pool.execute(
+            'DELETE FROM note_links WHERE source_id = ? OR target_id = ?',
+            [req.params.id, req.params.id]
+        );
+
         const [result] = await pool.execute(
             'DELETE FROM notes WHERE id = ? AND user_id = ?',
             [req.params.id, req.user.id]

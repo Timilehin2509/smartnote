@@ -27,6 +27,16 @@ router.post('/', authMiddleware, async (req, res) => {
             return res.status(400).json({ error: "Category name is required" });
         }
 
+        // Check if category exists for this user
+        const [existing] = await pool.execute(
+            'SELECT id FROM categories WHERE user_id = ? AND name = ?',
+            [req.user.id, name.trim()]
+        );
+
+        if (existing.length > 0) {
+            return res.status(400).json({ error: "Category name already exists" });
+        }
+
         const [result] = await pool.execute(
             'INSERT INTO categories (user_id, name) VALUES (?, ?)',
             [req.user.id, name.trim()]
@@ -37,6 +47,9 @@ router.post('/', authMiddleware, async (req, res) => {
             categoryId: result.insertId
         });
     } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ error: "Category name already exists" });
+        }
         console.error('Create category error:', error);
         res.status(500).json({ error: "Failed to create category" });
     }
