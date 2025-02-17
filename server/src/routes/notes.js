@@ -21,10 +21,14 @@ router.get('/', authMiddleware, async (req, res) => {
 // Get single note by ID
 router.get('/:id', authMiddleware, async (req, res) => {
     try {
+        console.log('Fetching note:', req.params.id, 'for user:', req.user.id);
+        
         const [notes] = await pool.execute(
             'SELECT * FROM notes WHERE id = ? AND user_id = ?',
             [req.params.id, req.user.id]
         );
+
+        console.log('Query result:', notes);
 
         if (notes.length === 0) {
             return res.status(404).json({ error: "Note not found" });

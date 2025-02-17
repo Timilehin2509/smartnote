@@ -1,0 +1,97 @@
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 id="noteTitle"></h3>
+                        <div>
+                            <button id="editBtn" class="btn btn-outline-primary me-2">Edit</button>
+                            <button id="deleteBtn" class="btn btn-outline-danger me-2">Delete</button>
+                            <a href="/notes" class="btn btn-outline-secondary">Back</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- View Mode -->
+                    <div id="viewMode">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="content-section mb-4">
+                                    <h5>Main Content</h5>
+                                    <div id="content" class="formatted-content"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="cue-section mb-4">
+                                    <h5>Cues</h5>
+                                    <div id="cueColumn" class="formatted-content"></div>
+                                </div>
+                                <div class="summary-section">
+                                    <h5>Summary</h5>
+                                    <div id="summary" class="formatted-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="meta-section mt-4">
+                            <span class="badge bg-primary me-2" id="category"></span>
+                            <div id="tags" class="d-inline"></div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Mode -->
+                    <div id="editMode" style="display: none;">
+                        <form id="editNoteForm">
+                            <div class="mb-3">
+                                <label for="editTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="editTitle" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="editContent" class="form-label">Main Content</label>
+                                        <textarea class="form-control" id="editContent" rows="10"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="editCueColumn" class="form-label">Cue Column</label>
+                                        <textarea class="form-control" id="editCueColumn" rows="4"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editSummary" class="form-label">Summary</label>
+                                        <textarea class="form-control" id="editSummary" rows="4"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editCategory" class="form-label">Category</label>
+                                        <select class="form-select" id="editCategory">
+                                            <option value="">Select Category</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editTags" class="form-label">Tags (comma separated)</label>
+                                        <input type="text" class="form-control" id="editTags">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="button" class="btn btn-secondary me-2" onclick="toggleEditMode()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
