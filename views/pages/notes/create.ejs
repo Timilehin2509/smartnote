@@ -1,0 +1,60 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>Create New Note</h3>
+                    <a href="/notes" class="btn btn-outline-secondary">Back to Notes</a>
+                </div>
+                <div class="card-body">
+                    <form id="createNoteForm">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="content" class="form-label">Main Content</label>
+                                    <textarea class="form-control" id="content" rows="10"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cue_column" class="form-label">Cue Column</label>
+                                    <textarea class="form-control" id="cue_column" rows="4"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="summary" class="form-label">Summary</label>
+                                    <textarea class="form-control" id="summary" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select class="form-select" id="category">
+                                        <option value="">Select Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="tags" class="form-label">Tags (comma separated)</label>
+                                    <input type="text" class="form-control" id="tags" placeholder="e.g., important, study, review">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Create Note</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

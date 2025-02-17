@@ -16,3 +16,25 @@ body {
     margin: 0 auto;
     padding: 20px;
 }
+
+/* Note Cards */
+.card {
+    transition: transform 0.2s;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card-title {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.badge {
+    font-weight: normal;
+    padding: 0.5em 1em;
+}

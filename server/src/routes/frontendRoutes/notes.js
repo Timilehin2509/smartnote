@@ -15,12 +15,4 @@ router.get('/create', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
-    res.render('pages/notes/view', {
-        title: 'View Note',
-        noteId: req.params.id,
-        scripts: ['view-note.js']
-    });
-});
-
 export default router;
