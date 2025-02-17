@@ -9,4 +9,11 @@ router.get('/login', (req, res) => {
     });
 });
 
+router.get('/register', (req, res) => {
+    res.render('pages/auth/register', {
+        title: 'Register',
+        scripts: ['register.js']
+    });
+});
+
 export default router;
