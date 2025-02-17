@@ -146,16 +146,31 @@ router.post('/:id/link', authMiddleware, async (req, res) => {
         const { linkedNoteIds } = req.body;
         const noteId = req.params.id;
 
-        // Verify all notes belong to user
-        const [userNotes] = await pool.execute(
-            'SELECT id FROM notes WHERE id IN (?) AND user_id = ?',
-            [linkedNoteIds, req.user.id]
-        );
-
-        if (userNotes.length !== linkedNoteIds.length) {
-            return res.status(400).json({ error: "Invalid note IDs" });
+        // Basic validation
+        if (!Array.isArray(linkedNoteIds) || linkedNoteIds.length === 0) {
+            return res.status(400).json({ error: "linkedNoteIds must be a non-empty array" });
         }
 
+        // Convert array to string for IN clause
+        const noteIdsString = linkedNoteIds.join(',');
+        
+        // Verify all notes belong to user
+        const [userNotes] = await pool.execute(
+            `SELECT id FROM notes WHERE id IN (${noteIdsString}) AND user_id = ?`,
+            [req.user.id]
+        );
+
+        console.log('Found notes:', userNotes); // Debug log
+
+        if (userNotes.length !== linkedNoteIds.length) {
+            return res.status(400).json({ 
+                error: "Invalid note IDs",
+                found: userNotes.length,
+                expected: linkedNoteIds.length
+            });
+        }
+
+        // Continue with linking...
         await pool.execute(
             'DELETE FROM note_links WHERE source_id = ?',
             [noteId]
