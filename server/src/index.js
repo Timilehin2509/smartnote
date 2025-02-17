@@ -13,6 +13,8 @@ import searchRoutes from './routes/search.js';
 
 // Frontend routes
 import frontendAuthRoutes from './routes/frontendRoutes/auth.js';
+import frontendNotesRoutes from './routes/frontendRoutes/notes.js';
+import frontendCategoriesRoutes from './routes/frontendRoutes/categories.js';
 
 // Initialize Express app
 const app = express();
@@ -36,6 +38,8 @@ app.use(express.static(join(__dirname, '../../public')));
 
 // Frontend routes
 app.use('/auth', frontendAuthRoutes);
+app.use('/notes', frontendNotesRoutes);
+app.use('/categories', frontendCategoriesRoutes);
 
 // API routes
 app.use('/api/auth', authRoutes);
