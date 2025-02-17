@@ -69,41 +69,48 @@ router.put('/:id', authMiddleware, async (req, res) => {
         const { title, content, cue_column, summary, category_id, tags } = req.body;
         const noteId = req.params.id;
 
-        if (!title?.trim()) {
-            return res.status(400).json({ error: "Title is required" });
-        }
-
-        // Log the update attempt
-        console.log('Update attempt:', {
-            noteId,
-            userId: req.user.id,
-            title,
-            category_id,
-            tags
-        });
-
-        const [result] = await pool.execute(
-            `UPDATE notes SET 
-                title = ?, content = ?, cue_column = ?, summary = ?, 
-                category_id = ?, tags = ? 
-            WHERE id = ? AND user_id = ?`,
-            [title.trim(), content, cue_column, summary, category_id, 
-             Array.isArray(tags) ? JSON.stringify(tags) : null, 
-             noteId, req.user.id]
+        // Get existing note
+        const [notes] = await pool.execute(
+            'SELECT * FROM notes WHERE id = ? AND user_id = ?',
+            [noteId, req.user.id]
         );
 
-        if (result.affectedRows === 0) {
+        if (notes.length === 0) {
             return res.status(404).json({ error: "Note not found" });
         }
 
+        const currentNote = notes[0];
+
+        // Update only provided fields
+        const updatedNote = {
+            title: title?.trim() || currentNote.title,
+            content: content !== undefined ? content : currentNote.content,
+            cue_column: cue_column !== undefined ? cue_column : currentNote.cue_column,
+            summary: summary !== undefined ? summary : currentNote.summary,
+            category_id: category_id !== undefined ? category_id : currentNote.category_id,
+            tags: tags !== undefined ? JSON.stringify(tags) : currentNote.tags
+        };
+
+        const [result] = await pool.execute(
+            `UPDATE notes SET 
+                title = ?, content = ?, cue_column = ?, 
+                summary = ?, category_id = ?, tags = ?
+            WHERE id = ? AND user_id = ?`,
+            [
+                updatedNote.title,
+                updatedNote.content,
+                updatedNote.cue_column,
+                updatedNote.summary,
+                updatedNote.category_id,
+                updatedNote.tags,
+                noteId,
+                req.user.id
+            ]
+        );
+
         res.json({ message: "Note updated successfully" });
     } catch (error) {
-        // Enhanced error logging
-        console.error('Update note error details:', {
-            message: error.message,
-            code: error.code,
-            stack: error.stack
-        });
+        console.error('Update note error:', error);
         res.status(500).json({ error: "Failed to update note" });
     }
 });
