@@ -56,6 +56,14 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// Serve login page
+router.get('/login', (req, res) => {
+    res.render('pages/auth/login', {
+        title: 'Login',
+        scripts: ['auth.js']
+    });
+});
+
 // Login route
 router.post('/login', async (req, res) => {
     try {
