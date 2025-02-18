@@ -37,7 +37,9 @@ function displayNotes(notes) {
                     <p class="card-text">${note.summary || 'No summary available'}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="/notes/${note.id}" class="btn btn-outline-primary btn-sm">View</a>
-                        <div class="badge bg-secondary">${note.category_id || 'Uncategorized'}</div>
+                        <div class="badge bg-secondary">
+                            ${note.category_name || 'Uncategorized'}
+                        </div>
                     </div>
                 </div>
             </div>

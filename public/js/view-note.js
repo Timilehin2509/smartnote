@@ -55,10 +55,10 @@ function displayNote(note) {
         summary.setAttribute('data-raw', note.summary || '');
         summary.innerHTML = marked.parse(note.summary || '');
         
-        // Set category
+        // Update category display
         const category = document.getElementById('category');
-        if (note.category_id) {
-            category.textContent = `Category: ${note.category_id}`;
+        if (note.category_name) {
+            category.textContent = note.category_name;
             category.setAttribute('data-id', note.category_id);
             category.style.display = 'inline-block';
         } else {
@@ -137,7 +137,7 @@ function setupEventListeners(noteId, token) {
     });
 }
 
-function toggleEditMode() {
+async function toggleEditMode() {
     const viewMode = document.getElementById('viewMode');
     const editMode = document.getElementById('editMode');
     
@@ -152,13 +152,34 @@ function toggleEditMode() {
         document.getElementById('editCueColumn').value = document.getElementById('cueColumn').getAttribute('data-raw') || '';
         document.getElementById('editSummary').value = document.getElementById('summary').getAttribute('data-raw') || '';
         
-        // Get category
-        const category = document.getElementById('category');
-        if (category.style.display !== 'none') {
-            document.getElementById('editCategory').value = category.getAttribute('data-id') || '';
+        // Load categories
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('/api/categories', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const categories = await response.json();
+            
+            const categorySelect = document.getElementById('editCategory');
+            categorySelect.innerHTML = '<option value="">Select Category</option>';
+            
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                // Set as selected if it matches current category
+                if (category.id === parseInt(document.getElementById('category').getAttribute('data-id'))) {
+                    option.selected = true;
+                }
+                categorySelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Failed to load categories:', error);
         }
         
-        // Get tags from spans and populate edit field
+        // Get tags
         const tags = Array.from(document.querySelectorAll('#tags .badge'))
             .map(tag => tag.textContent)
             .join(', ');

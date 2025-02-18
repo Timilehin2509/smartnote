@@ -4,31 +4,16 @@ import authMiddleware from '../config/auth.js';
 
 const router = express.Router();
 
-// Get all notes for user
-router.get('/', authMiddleware, async (req, res) => {
-    try {
-        const [notes] = await pool.execute(
-            'SELECT * FROM notes WHERE user_id = ?',
-            [req.user.id]
-        );
-        res.json(notes);
-    } catch (error) {
-        console.error('Get notes error:', error);
-        res.status(500).json({ error: "Failed to fetch notes" });
-    }
-});
-
-// Get single note by ID
+// Get single note
 router.get('/:id', authMiddleware, async (req, res) => {
     try {
-        console.log('Fetching note:', req.params.id, 'for user:', req.user.id);
-        
         const [notes] = await pool.execute(
-            'SELECT * FROM notes WHERE id = ? AND user_id = ?',
+            `SELECT n.*, c.name as category_name 
+             FROM notes n 
+             LEFT JOIN categories c ON n.category_id = c.id 
+             WHERE n.id = ? AND n.user_id = ?`,
             [req.params.id, req.user.id]
         );
-
-        console.log('Query result:', notes);
 
         if (notes.length === 0) {
             return res.status(404).json({ error: "Note not found" });
@@ -38,6 +23,23 @@ router.get('/:id', authMiddleware, async (req, res) => {
     } catch (error) {
         console.error('Get note error:', error);
         res.status(500).json({ error: "Failed to fetch note" });
+    }
+});
+
+// Get all notes
+router.get('/', authMiddleware, async (req, res) => {
+    try {
+        const [notes] = await pool.execute(
+            `SELECT n.*, c.name as category_name 
+             FROM notes n 
+             LEFT JOIN categories c ON n.category_id = c.id 
+             WHERE n.user_id = ?`,
+            [req.user.id]
+        );
+        res.json(notes);
+    } catch (error) {
+        console.error('Get notes error:', error);
+        res.status(500).json({ error: "Failed to fetch notes" });
     }
 });
 
