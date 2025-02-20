@@ -92,13 +92,22 @@ async function deleteCategory(id) {
             }
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Failed to delete category');
+            throw new Error(data.error);
+        }
+
+        // Show success message with affected notes count
+        if (data.affectedNotes > 0) {
+            alert(`Category deleted successfully. ${data.affectedNotes} note(s) have been uncategorized.`);
+        } else {
+            alert('Category deleted successfully.');
         }
 
         await loadCategories(token);
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to delete category');
+        alert(error.message || 'Failed to delete category');
     }
 }
