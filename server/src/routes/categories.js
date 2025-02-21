@@ -84,17 +84,35 @@ router.put('/:id', authMiddleware, async (req, res) => {
 // Delete category
 router.delete('/:id', authMiddleware, async (req, res) => {
     try {
+        // Begin transaction
+        await pool.execute('START TRANSACTION');
+
+        // Count affected notes
+        const [notes] = await pool.execute(
+            'SELECT COUNT(*) as count FROM notes WHERE category_id = ? AND user_id = ?',
+            [req.params.id, req.user.id]
+        );
+
+        // Delete category
         const [result] = await pool.execute(
             'DELETE FROM categories WHERE id = ? AND user_id = ?',
             [req.params.id, req.user.id]
         );
 
         if (result.affectedRows === 0) {
+            await pool.execute('ROLLBACK');
             return res.status(404).json({ error: "Category not found" });
         }
 
-        res.json({ message: "Category deleted successfully" });
+        // Complete transaction
+        await pool.execute('COMMIT');
+
+        res.json({ 
+            message: "Category deleted successfully", 
+            affectedNotes: notes[0].count 
+        });
     } catch (error) {
+        await pool.execute('ROLLBACK');
         console.error('Delete category error:', error);
         res.status(500).json({ error: "Failed to delete category" });
     }
