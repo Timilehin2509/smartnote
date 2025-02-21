@@ -33,29 +33,18 @@ async function loadNote(noteId, token) {
     }
 }
 
+// Update displayNote in view-note.js
 function displayNote(note) {
     try {
-        console.log('Displaying note:', note);
+        document.getElementById('noteTitle').textContent = note.title || '';
         
-        // Set title
-        document.getElementById('noteTitle').textContent = note.title;
+        ['content', 'cueColumn', 'summary'].forEach(field => {
+            const element = document.getElementById(field);
+            const rawContent = note[field.toLowerCase()] || '';
+            element.setAttribute('data-raw', rawContent);
+            element.innerHTML = marked.parse(rawContent);
+        });
         
-        // Set main content
-        const content = document.getElementById('content');
-        content.setAttribute('data-raw', note.content || '');
-        content.innerHTML = marked.parse(note.content || '');
-        
-        // Set cue column
-        const cueColumn = document.getElementById('cueColumn');
-        cueColumn.setAttribute('data-raw', note.cue_column || '');
-        cueColumn.innerHTML = marked.parse(note.cue_column || '');
-        
-        // Set summary
-        const summary = document.getElementById('summary');
-        summary.setAttribute('data-raw', note.summary || '');
-        summary.innerHTML = marked.parse(note.summary || '');
-        
-        // Update category display
         const category = document.getElementById('category');
         if (note.category_name) {
             category.textContent = note.category_name;

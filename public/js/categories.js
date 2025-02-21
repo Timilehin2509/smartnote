@@ -31,11 +31,24 @@ async function loadCategories(token) {
 
 function displayCategories(categories) {
     const categoriesList = document.getElementById('categoriesList');
+    if (!categories.length) {
+        categoriesList.innerHTML = `
+            <div class="col-12 text-center">
+                <p class="text-muted">No categories yet. Create your first category!</p>
+            </div>
+        `;
+        return;
+    }
+    
     categoriesList.innerHTML = categories.map(category => `
         <div class="col-md-4 mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">${category.name}</h5>
+                    <h5 class="card-title">
+                        <a href="/categories/${category.id}" class="text-decoration-none">
+                            ${category.name}
+                        </a>
+                    </h5>
                     <div class="mt-3">
                         <button class="btn btn-sm btn-outline-danger" 
                                 onclick="deleteCategory(${category.id})">
@@ -85,6 +98,8 @@ async function deleteCategory(id) {
 
     const token = localStorage.getItem('token');
     try {
+        console.log('Deleting category:', id); // Debug log
+        
         const response = await fetch(`/api/categories/${id}`, {
             method: 'DELETE',
             headers: {
@@ -93,9 +108,10 @@ async function deleteCategory(id) {
         });
 
         const data = await response.json();
+        console.log('Delete response:', data); // Debug log
 
         if (!response.ok) {
-            throw new Error(data.error);
+            throw new Error(data.error || 'Failed to delete category');
         }
 
         // Show success message with affected notes count
@@ -105,6 +121,7 @@ async function deleteCategory(id) {
             alert('Category deleted successfully.');
         }
 
+        // Reload categories list
         await loadCategories(token);
     } catch (error) {
         console.error('Error:', error);

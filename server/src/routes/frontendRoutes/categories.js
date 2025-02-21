@@ -8,4 +8,12 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/:id', (req, res) => {
+    res.render('pages/categories/view', {
+        title: 'View Category',
+        categoryId: req.params.id,
+        scripts: ['view-category.js']
+    });
+});
+
 export default router;
