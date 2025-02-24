@@ -38,12 +38,25 @@ function displayNote(note) {
     try {
         document.getElementById('noteTitle').textContent = note.title || '';
         
-        ['content', 'cueColumn', 'summary'].forEach(field => {
-            const element = document.getElementById(field);
-            const rawContent = note[field.toLowerCase()] || '';
-            element.setAttribute('data-raw', rawContent);
-            element.innerHTML = marked.parse(rawContent);
+        // Log the note data
+        console.log('Displaying note:', {
+            title: note.title,
+            content: note.content,
+            cue_column: note.cue_column,
+            summary: note.summary
         });
+
+        // Set content
+        document.getElementById('content').innerHTML = marked.parse(note.content || '');
+        document.getElementById('content').setAttribute('data-raw', note.content || '');
+        
+        // Set cue column
+        document.getElementById('cueColumn').innerHTML = marked.parse(note.cue_column || '');
+        document.getElementById('cueColumn').setAttribute('data-raw', note.cue_column || '');
+        
+        // Set summary
+        document.getElementById('summary').innerHTML = marked.parse(note.summary || '');
+        document.getElementById('summary').setAttribute('data-raw', note.summary || '');
         
         const category = document.getElementById('category');
         if (note.category_name) {
@@ -182,7 +195,6 @@ async function toggleEditMode() {
 
 async function updateNote(noteId, token) {
     try {
-        console.log('Updating note:', noteId);
         const formData = {
             title: document.getElementById('editTitle').value,
             content: document.getElementById('editContent').value,
@@ -195,7 +207,8 @@ async function updateNote(noteId, token) {
                 .filter(tag => tag.length > 0)
         };
 
-        console.log('Update data:', formData);
+        // Log the update data
+        console.log('Updating note with data:', formData);
 
         const response = await fetch(`/api/notes/${noteId}`, {
             method: 'PUT',
