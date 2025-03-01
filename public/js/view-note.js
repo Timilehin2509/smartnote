@@ -34,6 +34,7 @@ async function loadNote(noteId, token) {
 }
 
 // Update displayNote in view-note.js
+// Modified displayNote function
 function displayNote(note) {
     try {
         document.getElementById('noteTitle').textContent = note.title || '';
@@ -142,22 +143,24 @@ function setupEventListeners(noteId, token) {
 let contentEditor, cueEditor, summaryEditor;
 let originalContent = null;
 
+// Modified cleanupEditors function
 function cleanupEditors() {
     if (contentEditor) {
-        contentEditor.toTextArea();
+        tinymce.remove('#editContent');
         contentEditor = null;
     }
     if (cueEditor) {
-        cueEditor.toTextArea();
+        tinymce.remove('#editCueColumn');
         cueEditor = null;
     }
     if (summaryEditor) {
-        summaryEditor.toTextArea();
+        tinymce.remove('#editSummary');
         summaryEditor = null;
     }
 }
 
 // Remove duplicate onbeforeunload setup in toggleEditMode
+// Modified toggleEditMode function
 async function toggleEditMode() {
     const viewMode = document.getElementById('viewMode');
     const editMode = document.getElementById('editMode');
@@ -174,21 +177,27 @@ async function toggleEditMode() {
             viewMode.style.display = 'none';
             editMode.style.display = 'block';
 
-            // Initialize editors
-            await Promise.all([
-                initializeMarkdownEditor('editContent', { height: '400px' }),
-                initializeMarkdownEditor('editCueColumn', { height: '200px' }),
-                initializeMarkdownEditor('editSummary', { height: '200px' })
-            ]).then(([content, cue, summary]) => {
-                contentEditor = content;
-                cueEditor = cue;
-                summaryEditor = summary;
-            });
+            // Get raw markdown content
+            const contentMarkdown = document.getElementById('content').getAttribute('data-raw') || '';
+            const cueMarkdown = document.getElementById('cueColumn').getAttribute('data-raw') || '';
+            const summaryMarkdown = document.getElementById('summary').getAttribute('data-raw') || '';
+            
+            // Convert markdown to HTML for TinyMCE
+            document.getElementById('editContent').value = markdownToHtml(contentMarkdown);
+            document.getElementById('editCueColumn').value = markdownToHtml(cueMarkdown);
+            document.getElementById('editSummary').value = markdownToHtml(summaryMarkdown);
 
-            // Set content
-            contentEditor.value(document.getElementById('content').getAttribute('data-raw') || '');
-            cueEditor.value(document.getElementById('cueColumn').getAttribute('data-raw') || '');
-            summaryEditor.value(document.getElementById('summary').getAttribute('data-raw') || '');
+            // Initialize editors
+            const editorPromises = [
+                initializeRichEditor('editContent', { height: 400 }),
+                initializeRichEditor('editCueColumn', { height: 200 }),
+                initializeRichEditor('editSummary', { height: 200 })
+            ];
+            
+            const [content, cue, summary] = await Promise.all(editorPromises);
+            contentEditor = content;
+            cueEditor = cue;
+            summaryEditor = summary;
             
             // Set title first
             const title = document.getElementById('noteTitle').textContent;
@@ -228,22 +237,24 @@ async function toggleEditMode() {
             document.getElementById('editTags').value = tags;
 
             // After all content is set, store original state
-            originalContent = {
-                title: document.getElementById('editTitle').value,
-                content: contentEditor.value(),
-                cue_column: cueEditor.value(),
-                summary: summaryEditor.value(),
-                category_id: document.getElementById('editCategory').value,
-                tags: document.getElementById('editTags').value
-            };
-
-            // Set up unsaved changes warning
-            window.onbeforeunload = function(e) {
-                if (hasUnsavedChanges()) {
-                    e.preventDefault();
-                    return "You have unsaved changes. Are you sure you want to leave?";
-                }
-            };
+            // We need to wait a moment for TinyMCE to initialize
+            setTimeout(() => {
+                originalContent = {
+                    title: document.getElementById('editTitle').value,
+                    content: tinymce.get('editContent').getContent(),
+                    cue_column: tinymce.get('editCueColumn').getContent(),
+                    summary: tinymce.get('editSummary').getContent(),
+                    category_id: document.getElementById('editCategory').value,
+                    tags: document.getElementById('editTags').value
+                };
+                
+                // Set up unsaved changes warning
+                window.onbeforeunload = function() {
+                    if (hasUnsavedChanges()) {
+                        return "You have unsaved changes. Are you sure you want to leave?";
+                    }
+                };
+            }, 500);
         } finally {
             loadingDiv.remove();
         }
@@ -290,14 +301,26 @@ function validateNoteContent(formData) {
 }
 
 // Update the updateNote function
+// Modified updateNote function
 async function updateNote(noteId, token) {
     try {
         setLoading(true); // Add loading state
+        
+        // Get HTML content from TinyMCE editors
+        const contentHtml = tinymce.get('editContent').getContent();
+        const cueHtml = tinymce.get('editCueColumn').getContent();
+        const summaryHtml = tinymce.get('editSummary').getContent();
+        
+        // Convert HTML to Markdown for storage
+        const contentMarkdown = htmlToMarkdown(contentHtml);
+        const cueMarkdown = htmlToMarkdown(cueHtml);
+        const summaryMarkdown = htmlToMarkdown(summaryHtml);
+        
         const formData = {
             title: document.getElementById('editTitle').value,
-            content: contentEditor.value(),
-            cue_column: cueEditor.value(),
-            summary: summaryEditor.value(),
+            content: contentMarkdown,
+            cue_column: cueMarkdown,
+            summary: summaryMarkdown,
             category_id: document.getElementById('editCategory').value || null,
             tags: document.getElementById('editTags').value
                 .split(',')
@@ -340,119 +363,123 @@ async function updateNote(noteId, token) {
         setLoading(false); // Remove loading state
     }
 }
-
-function initializeMarkdownEditor(elementId, options = {}) {
-    return new EasyMDE({
-        element: document.getElementById(elementId),
-        spellChecker: false,
-        status: false,
-        toolbar: [
-            {
-                name: "bold",
-                action: EasyMDE.toggleBold,
-                className: "fa fa-bold",
-                title: "Bold",
-            },
-            {
-                name: "italic",
-                action: EasyMDE.toggleItalic,
-                className: "fa fa-italic",
-                title: "Italic",
-            },
-            '|',
-            {
-                name: "heading-2",
-                action: EasyMDE.toggleHeading2,
-                className: "fa fa-header",
-                title: "Medium Heading",
-            },
-            {
-                name: "heading-3",
-                action: EasyMDE.toggleHeading3,
-                className: "fa fa-header header-smaller",
-                title: "Small Heading",
-            },
-            '|',
-            {
-                name: "unordered-list",
-                action: EasyMDE.toggleUnorderedList,
-                className: "fa fa-list-ul",
-                title: "Bullet List",
-            },
-            {
-                name: "ordered-list",
-                action: EasyMDE.toggleOrderedList,
-                className: "fa fa-list-ol",
-                title: "Number List",
-            },
-            '|',
-            {
-                name: "checklist",
-                action: function(editor) {
-                    const cm = editor.codemirror;
-                    const selection = cm.getSelection();
-                    const text = selection || "";
-                    const cursor = cm.getCursor();
-                    const line = cm.getLine(cursor.line);
-                    
-                    // Toggle checkbox state if it exists
-                    if (line.startsWith("- [ ] ")) {
-                        cm.replaceRange("- [x] " + line.substring(6), 
-                            {line: cursor.line, ch: 0}, 
-                            {line: cursor.line, ch: line.length});
-                    } else if (line.startsWith("- [x] ")) {
-                        cm.replaceRange("- [ ] " + line.substring(6), 
-                            {line: cursor.line, ch: 0}, 
-                            {line: cursor.line, ch: line.length});
-                    } else {
-                        // Add new checkbox
-                        cm.replaceSelection("- [ ] " + text);
-                    }
-                },
-                className: "fa fa-check-square",
-                title: "Toggle Task Checkbox",
-            },
-            '|',
-            {
-                name: "clean-block",
-                action: EasyMDE.cleanBlock,
-                className: "fa fa-eraser",
-                title: "Clean Formatting",
-            },
-            '|',
-            {
-                name: "preview",
-                action: EasyMDE.togglePreview,
-                className: "fa fa-eye",
-                title: "Toggle Preview",
-            }
+// TinyMCE editor initialization function
+function initializeRichEditor(elementId, options = {}) {
+    return tinymce.init({
+        selector: `#${elementId}`,
+        height: options.height || 400,
+        menubar: false,
+        plugins: [
+            'lists', 'autolink', 'checklist', 'link',
+            'searchreplace', 'wordcount'
         ],
-        shortcuts: {
-            "toggleBold": "Ctrl-B",
-            "toggleItalic": "Ctrl-I",
-            "toggleUnorderedList": "Ctrl-U",
-            "toggleOrderedList": "Ctrl-O",
-            "cleanBlock": "Ctrl-E",
-            "toggleChecklist": "Ctrl-T"
+        toolbar: [
+            'undo redo | formatselect | ' +
+            'bold italic | bullist numlist checklist | ' +
+            'removeformat'
+        ],
+        formats: {
+            h1: { block: 'h1' },
+            h2: { block: 'h2' },
+            h3: { block: 'h3' }
         },
-        minHeight: options.height || "200px",
-        maxHeight: options.height || "400px",
-        previewRender: function(plainText) {
-            // Use same styling as view mode
-            return `<div class="preview-content">${marked.parse(plainText)}</div>`;
+        statusbar: false,
+        branding: false,
+        content_style: `
+            body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                font-size: 14px;
+                line-height: 1.5;
+                padding: 1rem;
+            }
+        `,
+        setup: function(editor) {
+            // Add custom checklist handling
+            editor.ui.registry.addToggleButton('checklist', {
+                icon: 'checklist',
+                tooltip: 'Toggle Task Checkbox',
+                onAction: function() {
+                    const selection = editor.selection.getContent();
+                    const node = editor.selection.getNode();
+                    
+                    if (node.nodeName === 'LI') {
+                        // Check if it already has a checkbox
+                        if (node.innerHTML.indexOf('☐') === 0) {
+                            // Change unchecked to checked
+                            editor.dom.setHTML(node, node.innerHTML.replace('☐', '☑'));
+                        } else if (node.innerHTML.indexOf('☑') === 0) {
+                            // Change checked to unchecked
+                            editor.dom.setHTML(node, node.innerHTML.replace('☑', '☐'));
+                        } else {
+                            // Add a new checkbox
+                            editor.dom.setHTML(node, '☐ ' + node.innerHTML);
+                        }
+                    } else {
+                        // Create a new list item with checkbox
+                        editor.insertContent('<ul><li>☐ ' + (selection || '') + '</li></ul>');
+                    }
+                }
+            });
+            
+            // Set up keyboard shortcuts similar to the markdown editor
+            editor.addShortcut('meta+b', 'Bold', 'Bold');
+            editor.addShortcut('meta+i', 'Italic', 'Italic');
+            editor.addShortcut('meta+u', 'Bullet list', 'InsertUnorderedList');
+            editor.addShortcut('meta+o', 'Numbered list', 'InsertOrderedList');
+            editor.addShortcut('meta+t', 'Toggle checkbox', function() {
+                editor.execCommand('checklist');
+            });
         },
-        sideBySideFullscreen: false,
+        ...options
     });
 }
 
+// Helper function to convert Markdown to HTML
+function markdownToHtml(markdown) {
+    return marked.parse(markdown || '');
+}
+
+// Helper function to convert HTML to Markdown (simplified)
+function htmlToMarkdown(html) {
+    // Simple HTML to Markdown conversion
+    // This is a basic implementation - for production, consider using a library
+    let markdown = html || '';
+    
+    // Replace common HTML elements with Markdown
+    markdown = markdown
+        .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+        .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+        .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+        .replace(/<strong>(.*?)<\/strong>/gi, '**$1**')
+        .replace(/<b>(.*?)<\/b>/gi, '**$1**')
+        .replace(/<em>(.*?)<\/em>/gi, '*$1*')
+        .replace(/<i>(.*?)<\/i>/gi, '*$1*')
+        .replace(/<ul>(.*?)<\/ul>/gis, function(match, list) {
+            return list.replace(/<li>(.*?)<\/li>/gi, '- $1\n');
+        })
+        .replace(/<ol>(.*?)<\/ol>/gis, function(match, list) {
+            let index = 1;
+            return list.replace(/<li>(.*?)<\/li>/gi, function(match, item) {
+                return (index++) + '. ' + item + '\n';
+            });
+        })
+        .replace(/<li>☑ (.*?)<\/li>/gi, '- [x] $1\n')
+        .replace(/<li>☐ (.*?)<\/li>/gi, '- [ ] $1\n')
+        .replace(/<p>(.*?)<\/p>/gi, '$1\n\n')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<[^>]+>/g, ''); // Remove any remaining tags
+    
+    return markdown.trim();
+}
+// Modified hasUnsavedChanges function
 function hasUnsavedChanges() {
-    if (!contentEditor) return false;
+    if (!tinymce.get('editContent')) return false;
     
     const currentContent = {
         title: document.getElementById('editTitle').value,
-        content: contentEditor.value(),
-        cue_column: cueEditor.value(),
-        summary: summaryEditor.value(),
+        content: tinymce.get('editContent').getContent(),
+        cue_column: tinymce.get('editCueColumn').getContent(),
+        summary: tinymce.get('editSummary').getContent(),
         category_id: document.getElementById('editCategory').value,
         tags: document.getElementById('editTags').value
     };
