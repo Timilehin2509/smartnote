@@ -157,7 +157,7 @@ function cleanupEditors() {
     }
 }
 
-// Update toggleEditMode to properly set originalContent
+// Remove duplicate onbeforeunload setup in toggleEditMode
 async function toggleEditMode() {
     const viewMode = document.getElementById('viewMode');
     const editMode = document.getElementById('editMode');
@@ -238,8 +238,9 @@ async function toggleEditMode() {
             };
 
             // Set up unsaved changes warning
-            window.onbeforeunload = function() {
+            window.onbeforeunload = function(e) {
                 if (hasUnsavedChanges()) {
+                    e.preventDefault();
                     return "You have unsaved changes. Are you sure you want to leave?";
                 }
             };
@@ -247,18 +248,17 @@ async function toggleEditMode() {
             loadingDiv.remove();
         }
     } else {
+        // Prompt if there are unsaved changes
+        if (hasUnsavedChanges() && !confirm('You have unsaved changes. Are you sure you want to exit?')) {
+            return;
+        }
+        
         // Clear unsaved changes warning when exiting edit mode
         window.onbeforeunload = null;
         viewMode.style.display = 'block';
         editMode.style.display = 'none';
         cleanupEditors();
     }
-    
-    window.onbeforeunload = function() {
-        if (hasUnsavedChanges()) {
-            return "You have unsaved changes. Are you sure you want to leave?";
-        }
-    };
 }
 
 // Add validation function
