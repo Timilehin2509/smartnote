@@ -38,3 +38,77 @@ body {
     font-weight: normal;
     padding: 0.5em 1em;
 }
+
+/* EasyMDE Custom Styles */
+.EasyMDEContainer {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+}
+
+.EasyMDEContainer .editor-toolbar {
+    border: none;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 0.25rem 0.25rem 0 0;
+    background: #f8f9fa;
+}
+
+.EasyMDEContainer .CodeMirror {
+    border: none;
+    border-radius: 0 0 0.25rem 0.25rem;
+}
+
+.editor-preview {
+    background: #fff;
+    padding: 1rem;
+}
+
+.editor-toolbar button {
+    color: #495057 !important;
+}
+
+.editor-toolbar button:hover {
+    background: #e9ecef !important;
+    border-color: #dee2e6 !important;
+}
+
+.editor-toolbar.disabled-for-preview button:not(.no-disable) {
+    opacity: 0.3;
+}
+
+@media (max-width: 768px) {
+    .EasyMDEContainer {
+        max-height: 300px;
+    }
+    
+    .editor-toolbar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .editor-toolbar button {
+        margin: 2px;
+    }
+}
+
+.preview-content {
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.preview-content h2, 
+.preview-content h3 {
+    color: #333;
+    margin-top: 1rem;
+}
+
+.preview-content ul, 
+.preview-content ol {
+    padding-left: 2rem;
+}
+
+.preview-content input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
