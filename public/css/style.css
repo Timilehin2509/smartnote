@@ -112,3 +112,41 @@ body {
 .preview-content input[type="checkbox"] {
     margin-right: 0.5rem;
 }
+
+/* Note Linking Styles */
+.linked-notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.linked-note-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+
+/* Update link type styles */
+.linked-note-card.incoming {
+    border-left: 3px solid #28a745;
+}
+
+.linked-note-card.outgoing {
+    border-left: 3px solid #007bff;
+}
+
+/* Add flexbox for link type indicators */
+.link-type-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.linked-note-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

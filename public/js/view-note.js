@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const noteId = window.location.pathname.split('/').pop();
     await loadNote(noteId, token);
     setupEventListeners(noteId, token);
+    
+    // Initialize note linking
+    const linkManager = new NoteLinkManager(noteId);
+    await linkManager.initialize();  // Add this line
 });
 
 async function loadNote(noteId, token) {
@@ -19,13 +23,11 @@ async function loadNote(noteId, token) {
             }
         });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to load note');
-        }
-
         const note = await response.json();
-        console.log('Note loaded:', note);
+        console.log('Loaded note data:', note);  // Debug log
+        
+        if (!response.ok) throw new Error(note.error || 'Failed to load note');
+        
         displayNote(note);
     } catch (error) {
         console.error('Error loading note:', error);
@@ -94,6 +96,32 @@ function displayNote(note) {
             }
         } else {
             tagsContainer.innerHTML = '';
+        }
+
+        // Display linked notes
+        const linkedNotesContainer = document.getElementById('linkedNotesDisplay');
+        if (note.linkedNotes && note.linkedNotes.length > 0) {
+            linkedNotesContainer.innerHTML = note.linkedNotes.map(linkedNote => `
+                <a href="/notes/${linkedNote.id}" class="text-decoration-none">
+                    <div class="linked-note-card ${linkedNote.link_type}">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">
+                                ${linkedNote.link_type === 'incoming' ? '← ' : '→ '}
+                                ${linkedNote.title}
+                            </h6>
+                            <span class="badge bg-${linkedNote.link_type === 'incoming' ? 'success' : 'primary'}">
+                                ${linkedNote.link_type}
+                            </span>
+                        </div>
+                        <p class="small text-muted mb-0">
+                            ${linkedNote.category_name || 'Uncategorized'} • 
+                            ${new Date(linkedNote.created_at).toLocaleDateString()}
+                        </p>
+                    </div>
+                </a>
+            `).join('');
+        } else {
+            linkedNotesContainer.innerHTML = '<p class="text-muted">No linked notes</p>';
         }
     } catch (error) {
         console.error('Error displaying note:', error);

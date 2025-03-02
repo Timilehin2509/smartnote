@@ -1,5 +1,6 @@
 <script src="/js/editor-utils.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="/js/note-link-manager.js"></script>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-10">
@@ -38,6 +39,13 @@
                         <div class="meta-section mt-4">
                             <span class="badge bg-primary me-2" id="category"></span>
                             <div id="tags" class="d-inline"></div>
+                        </div>
+
+                        <div class="linked-notes-section mt-4">
+                            <h5>Linked Notes</h5>
+                            <div id="linkedNotesDisplay" class="linked-notes-grid">
+                                <!-- Linked notes will be displayed here -->
+                            </div>
                         </div>
                     </div>
 

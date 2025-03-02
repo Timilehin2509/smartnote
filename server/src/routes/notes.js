@@ -4,9 +4,10 @@ import authMiddleware from '../config/auth.js';
 
 const router = express.Router();
 
-// Get single note
+// Get single note - update this route
 router.get('/:id', authMiddleware, async (req, res) => {
     try {
+        // First get the note details
         const [notes] = await pool.execute(
             `SELECT n.*, c.name as category_name 
              FROM notes n 
@@ -19,7 +20,26 @@ router.get('/:id', authMiddleware, async (req, res) => {
             return res.status(404).json({ error: "Note not found" });
         }
 
-        res.json(notes[0]);
+        // Then get linked notes
+        const [linkedNotes] = await pool.execute(
+            `SELECT n.*, c.name as category_name,
+                    CASE 
+                        WHEN nl1.source_id = ? THEN 'outgoing'
+                        WHEN nl2.target_id = ? THEN 'incoming'
+                    END as link_type
+             FROM notes n
+             LEFT JOIN categories c ON n.category_id = c.id 
+             LEFT JOIN note_links nl1 ON (n.id = nl1.target_id AND nl1.source_id = ?)
+             LEFT JOIN note_links nl2 ON (n.id = nl2.source_id AND nl2.target_id = ?)
+             WHERE ((nl1.source_id = ? OR nl2.target_id = ?))
+             AND n.user_id = ?`,
+            [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.user.id]
+        );
+
+        // Combine note with its links
+        const note = notes[0];
+        note.linkedNotes = linkedNotes;
+        res.json(note);
     } catch (error) {
         console.error('Get note error:', error);
         res.status(500).json({ error: "Failed to fetch note" });
@@ -146,54 +166,66 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// Link notes
-router.post('/:id/link', authMiddleware, async (req, res) => {
+// Update the link endpoint to match
+router.post('/:id/links', authMiddleware, async (req, res) => {
+    let connection;
     try {
         const { linkedNoteIds } = req.body;
         const noteId = req.params.id;
 
-        // Basic validation
-        if (!Array.isArray(linkedNoteIds) || linkedNoteIds.length === 0) {
-            return res.status(400).json({ error: "linkedNoteIds must be a non-empty array" });
+        if (!Array.isArray(linkedNoteIds)) {
+            return res.status(400).json({ error: "linkedNoteIds must be an array" });
         }
 
-        // Convert array to string for IN clause
-        const noteIdsString = linkedNoteIds.join(',');
-        
-        // Verify all notes belong to user
-        const [userNotes] = await pool.execute(
-            `SELECT id FROM notes WHERE id IN (${noteIdsString}) AND user_id = ?`,
-            [req.user.id]
-        );
+        connection = await pool.getConnection();
+        await connection.beginTransaction();
 
-        console.log('Found notes:', userNotes); // Debug log
-
-        if (userNotes.length !== linkedNoteIds.length) {
-            return res.status(400).json({ 
-                error: "Invalid note IDs",
-                found: userNotes.length,
-                expected: linkedNoteIds.length
-            });
-        }
-
-        // Continue with linking...
-        await pool.execute(
+        // Delete existing links
+        await connection.execute(
             'DELETE FROM note_links WHERE source_id = ?',
             [noteId]
         );
 
-        const linkPromises = linkedNoteIds.map(linkedId => 
-            pool.execute(
-                'INSERT INTO note_links (source_id, target_id) VALUES (?, ?)',
-                [noteId, linkedId]
-            )
+        // Add new links if any exist
+        if (linkedNoteIds.length > 0) {
+            const placeholders = linkedNoteIds.map(() => '(?, ?)').join(',');
+            const values = linkedNoteIds.flatMap(id => [noteId, parseInt(id)]);
+            
+            await connection.execute(
+                `INSERT INTO note_links (source_id, target_id) VALUES ${placeholders}`,
+                values
+            );
+        }
+
+        await connection.commit();
+
+        // Get updated linked notes
+        const [linkedNotes] = await connection.execute(
+            `SELECT n.*, c.name as category_name,
+                    CASE 
+                        WHEN nl1.source_id = ? THEN 'outgoing'
+                        WHEN nl2.target_id = ? THEN 'incoming'
+                    END as link_type
+             FROM notes n
+             LEFT JOIN categories c ON n.category_id = c.id 
+             LEFT JOIN note_links nl1 ON (n.id = nl1.target_id AND nl1.source_id = ?)
+             LEFT JOIN note_links nl2 ON (n.id = nl2.source_id AND nl2.target_id = ?)
+             WHERE ((nl1.source_id = ? OR nl2.target_id = ?))
+             AND n.user_id = ?`,
+            [noteId, noteId, noteId, noteId, noteId, noteId, req.user.id]
         );
 
-        await Promise.all(linkPromises);
-        res.status(201).json({ message: "Notes linked successfully" });
+        res.json({
+            message: "Links updated successfully",
+            linkedNotes
+        });
+
     } catch (error) {
+        if (connection) await connection.rollback();
         console.error('Link notes error:', error);
-        res.status(500).json({ error: "Failed to link notes" });
+        res.status(500).json({ error: "Failed to update links" });
+    } finally {
+        if (connection) connection.release();
     }
 });
 
