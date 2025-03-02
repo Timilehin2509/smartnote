@@ -180,28 +180,42 @@ router.post('/:id/links', authMiddleware, async (req, res) => {
         connection = await pool.getConnection();
         await connection.beginTransaction();
 
-        // Delete existing links
+        // First, remove only outgoing links from the current note
         await connection.execute(
             'DELETE FROM note_links WHERE source_id = ?',
             [noteId]
         );
 
-        // Add new links if any exist
+        // Add new outgoing links, checking for duplicates
         if (linkedNoteIds.length > 0) {
-            const placeholders = linkedNoteIds.map(() => '(?, ?)').join(',');
-            const values = linkedNoteIds.flatMap(id => [noteId, parseInt(id)]);
-            
-            await connection.execute(
-                `INSERT INTO note_links (source_id, target_id) VALUES ${placeholders}`,
-                values
+            // Filter out any IDs that would create duplicate links
+            const [existingLinks] = await connection.execute(
+                'SELECT source_id, target_id FROM note_links WHERE target_id = ? AND source_id IN (?)',
+                [noteId, linkedNoteIds]
             );
+
+            const nonDuplicateIds = linkedNoteIds.filter(id => 
+                !existingLinks.some(link => 
+                    link.source_id === parseInt(id) && link.target_id === parseInt(noteId)
+                )
+            );
+
+            if (nonDuplicateIds.length > 0) {
+                const placeholders = nonDuplicateIds.map(() => '(?, ?)').join(',');
+                const values = nonDuplicateIds.flatMap(id => [noteId, parseInt(id)]);
+                
+                await connection.execute(
+                    `INSERT INTO note_links (source_id, target_id) VALUES ${placeholders}`,
+                    values
+                );
+            }
         }
 
         await connection.commit();
 
         // Get updated linked notes
         const [linkedNotes] = await connection.execute(
-            `SELECT n.*, c.name as category_name,
+            `SELECT DISTINCT n.*, c.name as category_name,
                     CASE 
                         WHEN nl1.source_id = ? THEN 'outgoing'
                         WHEN nl2.target_id = ? THEN 'incoming'
@@ -219,10 +233,9 @@ router.post('/:id/links', authMiddleware, async (req, res) => {
             message: "Links updated successfully",
             linkedNotes
         });
-
     } catch (error) {
-        if (connection) await connection.rollback();
         console.error('Link notes error:', error);
+        if (connection) await connection.rollback();
         res.status(500).json({ error: "Failed to update links" });
     } finally {
         if (connection) connection.release();

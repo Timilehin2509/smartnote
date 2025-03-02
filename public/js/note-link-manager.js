@@ -113,7 +113,7 @@ class NoteLinkManager {
             });
             const allNotes = await response.json();
             
-            // Filter available notes
+            // Filter out current note and any notes that are already linked (in either direction)
             this.availableNotes = allNotes.filter(note => 
                 note.id !== parseInt(this.parentNoteId) && 
                 !this.linkedNotes.some(linked => linked.id === note.id)
@@ -179,29 +179,36 @@ class NoteLinkManager {
         const container = document.getElementById('linkedNotes');
         container.innerHTML = this.linkedNotes.length ? this.linkedNotes.map(note => `
             <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                 data-note-id="${note.id}">
+                 data-note-id="${note.id}" data-link-type="${note.link_type}">
                 <div>
-                    <h6 class="mb-1">${note.title}</h6>
+                    <h6 class="mb-1">
+                        ${note.link_type === 'incoming' ? '← ' : '→ '}
+                        ${note.title}
+                    </h6>
                     <small class="text-muted">
                         ${note.category_name || 'Uncategorized'} • 
-                        ${new Date(note.created_at).toLocaleDateString()}
+                        ${new Date(note.created_at).toLocaleDateString()} •
+                        <span class="text-${note.link_type === 'incoming' ? 'success' : 'primary'}">
+                            ${note.link_type} link
+                        </span>
                     </small>
                 </div>
-                <button class="btn btn-sm btn-outline-danger unlink-note-btn">
-                    <i class="bi bi-x-lg"></i>
-                </button>
+                ${note.link_type === 'outgoing' ? `
+                    <button class="btn btn-sm btn-outline-danger unlink-note-btn">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                ` : ''}
             </div>
         `).join('') : '<p class="text-muted m-3">No linked notes</p>';
 
-        // Add click handlers
+        // Only add unlink handlers for outgoing links
         container.querySelectorAll('.unlink-note-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const noteElement = e.target.closest('.list-group-item');
                 const noteId = parseInt(noteElement.dataset.noteId);
-                const note = this.linkedNotes.find(n => n.id === noteId);
-                if (note) {
-                    this.availableNotes.push(note);
+                if (noteElement.dataset.linkType === 'outgoing') {
                     this.linkedNotes = this.linkedNotes.filter(n => n.id !== noteId);
+                    this.availableNotes.push(this.linkedNotes.find(n => n.id === noteId));
                     this.displayLinkedNotes();
                     this.displayAvailableNotes(this.availableNotes);
                 }
