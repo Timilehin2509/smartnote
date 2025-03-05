@@ -49,17 +49,26 @@ function displayNote(note) {
             summary: note.summary
         });
 
-        // Set content
-        document.getElementById('content').innerHTML = marked.parse(note.content || '');
+        // Update how content is displayed
+        const contentHtml = markdownToHtml(note.content || '');
+        const cueHtml = markdownToHtml(note.cue_column || '');
+        const summaryHtml = markdownToHtml(note.summary || '');
+        
+        document.getElementById('content').innerHTML = contentHtml;
         document.getElementById('content').setAttribute('data-raw', note.content || '');
         
-        // Set cue column
-        document.getElementById('cueColumn').innerHTML = marked.parse(note.cue_column || '');
+        document.getElementById('cueColumn').innerHTML = cueHtml;
         document.getElementById('cueColumn').setAttribute('data-raw', note.cue_column || '');
         
-        // Set summary
-        document.getElementById('summary').innerHTML = marked.parse(note.summary || '');
+        document.getElementById('summary').innerHTML = summaryHtml;
         document.getElementById('summary').setAttribute('data-raw', note.summary || '');
+
+        // Add checkbox functionality in view mode
+        document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                this.nextElementSibling.classList.toggle('task-completed');
+            });
+        });
         
         const category = document.getElementById('category');
         if (note.category_name) {
