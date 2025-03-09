@@ -81,8 +81,7 @@ function displaySearchResults(results) {
         <div class="search-result-item" onclick="navigateToResult('${result.type}', ${result.id})">
             <div class="d-flex justify-content-between align-items-center">
                 <strong>${result.title}</strong>
-                <span class="badge bg-${result.type === 'note' ? 'primary' : 'secondary'}">${result.type}</span>
-            </div>
+                <span class="badge" data-type="${result.type}">${result.type}</span>            </div>
             ${result.summary ? `<small class="text-muted">${result.summary}</small>` : ''}
         </div>
     `).join('');

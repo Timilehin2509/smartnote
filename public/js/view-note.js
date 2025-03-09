@@ -96,7 +96,7 @@ function displayNote(note) {
         
         if (tagArray.length > 0) {
             tagsContainer.innerHTML = tagArray.map(tag => 
-                `<span class="badge bg-secondary me-1">${tag}</span>`
+                `<span class="badge tag-badge me-1">${tag}</span>`
             ).join('');
             // Update edit form tags if in edit mode
             const editTags = document.getElementById('editTags');
