@@ -1,6 +1,9 @@
 .search-container {
     position: relative;
     width: 400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
 }
 
 .search-wrapper {

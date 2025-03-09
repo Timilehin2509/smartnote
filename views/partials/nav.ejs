@@ -17,9 +17,13 @@
             <div class="search-container mx-auto">
                 <div class="input-group">
                     <input type="text" class="form-control" id="globalSearch" 
-                           placeholder="Search notes, categories, and tags..." autocomplete="off">
-                    <button class="btn btn-outline-light" type="button" id="searchOptions">
-                        <i class="bi bi-gear"></i>
+                           placeholder="Search notes..." autocomplete="off">
+                    <button class="btn btn-icon" type="button" id="searchOptions">
+                        <i class="bi bi-funnel"></i>
+                    </button>
+                    <button class="btn btn-icon" id="themeToggle">
+                        <i class="bi bi-sun-fill dark-icon"></i>
+                        <i class="bi bi-moon-stars-fill light-icon"></i>
                     </button>
                 </div>
                 <div class="search-filters" id="searchFilters" style="display: none;">
@@ -39,12 +43,6 @@
             </div>
 
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <button id="themeToggle" class="btn btn-outline-light me-2">
-                        <i class="bi bi-moon-fill dark-icon"></i>
-                        <i class="bi bi-sun-fill light-icon" style="display: none;"></i>
-                    </button>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/auth/login" id="loginLink">Login</a>
                 </li>

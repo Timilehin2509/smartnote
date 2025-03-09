@@ -40,3 +40,21 @@
 .navbar .navbar-toggler-icon {
     filter: invert(1);
 }
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+    transition: all var(--transition-fast);
+}
+
+.btn-icon:hover {
+    background-color: var(--interactive-accent);
+    color: #ffffff;
+}

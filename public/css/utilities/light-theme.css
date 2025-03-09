@@ -54,11 +54,16 @@
     /* Bootstrap Theme Variables */
     --bs-body-bg: var(--background-primary);
     --bs-body-color: var(--text-normal);
+
+    /* Navbar specific */
+    --navbar-bg: var(--interactive-accent);
+    --navbar-text: #ffffff;
+    --navbar-hover: rgba(255, 255, 255, 0.9);
 }
 
 /* Light Theme Component Overrides */
 :root[data-theme="light"] .navbar {
-    background-color: var(--interactive-accent) !important;
+    background-color: var(--navbar-bg) !important;
 }
 
 :root[data-theme="light"] .btn-close {
@@ -90,4 +95,22 @@
 
 :root[data-theme="light"] .tox .tox-edit-area__iframe {
     background-color: var(--background-primary) !important;
+}
+
+:root[data-theme="light"] .navbar-nav .nav-link {
+    color: var(--navbar-text) !important;
+}
+
+:root[data-theme="light"] .navbar-nav .nav-link:hover {
+    color: var(--navbar-hover) !important;
+}
+
+/* Search and Theme Controls in Light Mode */
+:root[data-theme="light"] .btn-icon {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+:root[data-theme="light"] .btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
