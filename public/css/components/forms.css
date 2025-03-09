@@ -1,0 +1,37 @@
+.form-control {
+    background-color: var(--background-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-normal);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    transition: border-color var(--transition-fast);
+}
+
+.form-control:focus {
+    background-color: var(--background-primary);
+    border-color: var(--interactive-accent);
+    color: var(--text-normal);
+    box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.25);
+}
+
+.form-label {
+    color: var(--text-normal);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-select {
+    background-color: var(--background-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-normal);
+}
+
+.form-check-input {
+    background-color: var(--background-primary);
+    border-color: var(--border-color);
+}
+
+.form-check-input:checked {
+    background-color: var(--interactive-accent);
+    border-color: var(--interactive-accent);
+}

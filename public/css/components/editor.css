@@ -1,0 +1,188 @@
+.tox.tox-tinymce {
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    background-color: var(--background-secondary) !important;
+}
+
+/* Fix toolbar and its gap */
+.tox .tox-toolbar,
+.tox .tox-toolbar__primary,
+.tox .tox-toolbar__overflow {
+    background-color: var(--background-secondary-alt) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.tox .tox-toolbar-overlord {
+    background-color: var(--background-secondary-alt) !important;
+}
+
+/* Fix the edit area background and text */
+.tox .tox-edit-area {
+    background-color: var(--background-secondary) !important;
+}
+
+.tox .tox-edit-area__iframe {
+    background-color: var(--background-secondary) !important;
+}
+
+/* Fix the actual content area where text is typed */
+.mce-content-body {
+    background-color: var(--background-secondary) !important;
+    color: var(--text-normal) !important;
+}
+
+/* Fix scrollbar */
+.tox .tox-edit-area__iframe::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+}
+
+.tox .tox-edit-area__iframe::-webkit-scrollbar-track {
+    background: var(--scrollbar-bg) !important;
+}
+
+.tox .tox-edit-area__iframe::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb) !important;
+    border-radius: 4px !important;
+}
+
+.tox .tox-edit-area__iframe::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-hover) !important;
+}
+
+/* Fix text color in the iframe */
+.tox iframe {
+    background: var(--background-secondary) !important;
+}
+
+.tox .tox-tbtn {
+    color: var(--text-normal) !important;
+}
+
+.tox .tox-tbtn:hover {
+    background-color: var(--background-modifier-hover) !important;
+    color: var(--interactive-accent) !important;
+}
+
+.tox .tox-tbtn svg {
+    fill: var(--text-normal) !important;
+}
+
+.tox .tox-tbtn--enabled,
+.tox .tox-tbtn--enabled:hover {
+    background-color: var(--interactive-accent) !important;
+}
+
+.tox .tox-tbtn--enabled svg {
+    fill: #ffffff !important;
+}
+
+/* TinyMCE Content Area */
+.tox-tinymce-aux {
+    background-color: var(--background-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.tox .tox-menu {
+    background-color: var(--background-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.tox .tox-collection__item {
+    color: var(--text-normal) !important;
+}
+
+.tox .tox-collection__item--active {
+    background-color: var(--background-modifier-hover) !important;
+}
+
+.formatted-content {
+    background-color: var(--background-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1rem;
+    min-height: 100px;
+}
+
+.formatted-content ul[data-type="taskList"] {
+    list-style: none;
+    padding-left: 0;
+}
+
+.formatted-content ul[data-type="taskList"] li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0.25rem 0;
+}
+
+.task-checkbox {
+    margin-right: 0.5rem;
+}
+
+.task-completed {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* Dropdown and Menu Styling */
+.tox .tox-collection--list .tox-collection__item {
+    color: var(--text-normal) !important;
+}
+
+.tox .tox-collection--list .tox-collection__item--active {
+    background-color: var(--interactive-accent) !important;
+    color: #ffffff !important;
+}
+
+.tox .tox-collection--list .tox-collection__item--enabled {
+    background-color: var(--background-modifier-hover) !important;
+    color: var(--text-normal) !important;
+}
+
+/* Editor Content Area */
+.tox .tox-edit-area {
+    background-color: var(--background-primary) !important;
+}
+
+.tox .tox-edit-area__iframe {
+    background-color: var(--background-primary) !important;
+    color: var(--text-normal) !important;
+}
+
+/* Content Styling */
+.tox-tinymce {
+    font-family: var(--font-primary) !important;
+}
+
+.tox .tox-edit-area__iframe {
+    background-color: var(--background-primary) !important;
+}
+
+.mce-content-body {
+    color: var(--text-normal) !important;
+    background-color: var(--background-primary) !important;
+}
+
+/* Menu Overrides */
+.tox .tox-collection__item-label {
+    color: var(--text-normal) !important;
+}
+
+.tox .tox-collection__item:hover {
+    background-color: var(--background-modifier-hover) !important;
+}
+
+/* Status Bar */
+.tox .tox-statusbar {
+    background-color: var(--background-secondary-alt) !important;
+    border-top: 1px solid var(--border-color) !important;
+    color: var(--text-muted) !important;
+}
+
+/* Format Dropdown */
+.tox .tox-tbtn[title="Formats"] {
+    width: auto !important;
+    padding: 0 8px !important;
+}
+

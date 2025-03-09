@@ -1,0 +1,80 @@
+.modal-content {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    background-color: var(--background-secondary-alt);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 1rem;
+}
+
+.modal-title {
+    color: var(--text-normal);
+}
+
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Note Link Manager Styles */
+.list-group-item {
+    background-color: var(--background-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-normal) !important;
+}
+
+.list-group-item h6 {
+    color: var(--text-normal) !important;
+    margin-bottom: 0.25rem;
+}
+
+.list-group-item small,
+.list-group-item .text-muted {
+    color: var(--text-muted) !important;
+}
+
+.list-group-item:hover {
+    background-color: var(--interactive-accent) !important;
+    transform: translateX(4px);
+    transition: all var(--transition-fast);
+}
+
+.list-group-item:hover *,
+.list-group-item:hover .text-muted,
+.list-group-item:hover h6 {
+    color: #ffffff !important;
+}
+
+.list-group-item .btn {
+    opacity: 0.8;
+    transition: opacity var(--transition-fast);
+}
+
+.list-group-item:hover .btn {
+    opacity: 1;
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+/* Search filters inside modals */
+#noteLinkSearch {
+    background-color: var(--background-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-normal) !important;
+}
+
+#noteLinkSearch::placeholder {
+    color: var(--text-muted) !important;
+}

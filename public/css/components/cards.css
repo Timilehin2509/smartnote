@@ -1,0 +1,79 @@
+.card {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    background-color: var(--background-secondary-alt);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: var(--text-normal);
+    margin-bottom: 0.5rem;
+}
+
+/* Linked Notes Section Styling */
+.linked-notes-section {
+    background: var(--background-secondary-alt);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.linked-notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.linked-note-card {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1rem;
+    transition: all var(--transition-fast);
+    color: var(--text-normal) !important;
+}
+
+.linked-note-card:hover {
+    transform: translateX(4px);
+    background: var(--background-modifier-hover);
+    border-color: var(--interactive-accent);
+}
+
+.linked-note-card h6 {
+    color: var(--text-normal);
+    margin-bottom: 0.5rem;
+}
+
+.linked-note-card .text-muted {
+    color: var(--text-muted) !important;
+}
+
+.linked-note-card.incoming {
+    border-left: 3px solid var(--color-success);
+}
+
+.linked-note-card.outgoing {
+    border-left: 3px solid var(--interactive-accent);
+}
+
+/* Fix link colors */
+a .linked-note-card {
+    text-decoration: none;
+}

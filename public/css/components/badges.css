@@ -1,0 +1,27 @@
+.badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.tag-badge {
+    background-color: var(--background-secondary-alt);
+    color: var(--text-normal);
+    border: 1px solid var(--border-color);
+}
+
+.category-badge {
+    background-color: var(--interactive-accent);
+    color: var(--text-normal);
+}
+
+.badge[data-type="incoming"] {
+    background-color: var(--color-success);
+    color: var(--text-normal);
+}
+
+.badge[data-type="outgoing"] {
+    background-color: var(--interactive-accent);
+    color: var(--text-normal);
+}

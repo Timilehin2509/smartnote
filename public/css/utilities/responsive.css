@@ -1,0 +1,52 @@
+/* Mobile First Breakpoints */
+@media (max-width: 576px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .card {
+        margin: 0.5rem 0;
+    }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+
+    .search-container {
+        max-width: 300px;
+    }
+}
+
+/* Small Desktop */
+@media (max-width: 992px) {
+    .container {
+        max-width: 100%;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .search-container,
+    .btn {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+}

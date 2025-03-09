@@ -1,0 +1,36 @@
+.btn {
+    transition: all var(--transition-fast);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--interactive-accent);
+    border-color: var(--interactive-accent);
+}
+
+.btn-primary:hover {
+    background-color: var(--interactive-accent-hover);
+    border-color: var(--interactive-accent-hover);
+}
+
+.btn-outline-primary {
+    color: var(--interactive-accent);
+    border-color: var(--interactive-accent);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--interactive-accent);
+    border-color: var(--interactive-accent);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}

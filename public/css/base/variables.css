@@ -1,0 +1,58 @@
+:root {
+    /* Layout */
+    --max-width: 1200px;
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Dark Theme Colors (Default) */
+    --background-primary: #141414;
+    --background-secondary: #1e1e1e;
+    --background-secondary-alt: #262626;
+    --background-modifier-hover: #2d2d2d;
+
+    /* Colors - Text */
+    --text-normal: #ffffff;
+    --text-muted: #d4d4d4;
+    --text-faint: #a0a0a0;
+
+    /* Colors - Interactive */
+    --interactive-accent: #7667b0; /* More muted purple */
+    --interactive-accent-hover: #8a7bc7;
+    --interactive-accent-rgb: 118, 103, 176;
+
+    /* Colors - UI */
+    --border-color: #363636;
+    --scrollbar-bg: #202020;
+    --scrollbar-thumb: #454545;
+    --scrollbar-hover: #888888;
+
+    /* Colors - Semantic */
+    --color-success: #4aca4a;
+    --color-warning: #ffb224;
+    --color-danger: #ff4d4d;
+    --color-info: #3db9ff;
+
+    /* Typography */
+    --font-primary: 'Rubik', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+    --line-height-base: 1.7;
+    --letter-spacing: -0.01em;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+    /* Animation */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+
+    /* Bootstrap Theme Overrides */
+    --bs-body-bg: var(--background-primary);
+    --bs-body-color: var(--text-normal);
+    --bs-primary: var(--interactive-accent);
+    --bs-border-color: var(--border-color);
+}

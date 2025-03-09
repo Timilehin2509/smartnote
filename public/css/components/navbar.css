@@ -1,0 +1,42 @@
+.navbar {
+    background-color: var(--background-secondary-alt) !important;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+}
+
+/* Remove the bg-primary override since we want it dark by default */
+.navbar.bg-primary {
+    background-color: var(--background-secondary-alt) !important;
+}
+
+/* Improve navbar items contrast */
+.navbar-dark {
+    --bs-navbar-color: var(--text-muted);
+    --bs-navbar-hover-color: var(--text-normal);
+    --bs-navbar-active-color: var(--interactive-accent);
+}
+
+.navbar-brand {
+    color: var(--text-normal) !important;
+    font-weight: 500;
+}
+
+.navbar .btn-outline-light {
+    border-color: var(--border-color);
+    color: var(--text-normal);
+}
+
+.navbar .btn-outline-light:hover {
+    background-color: var(--background-modifier-hover);
+    border-color: var(--interactive-accent);
+    color: var(--interactive-accent);
+}
+
+/* Add specific dark theme overrides */
+.navbar .navbar-toggler {
+    border-color: var(--border-color);
+}
+
+.navbar .navbar-toggler-icon {
+    filter: invert(1);
+}
