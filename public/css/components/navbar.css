@@ -2,6 +2,15 @@
     background-color: var(--background-secondary-alt) !important;
     border-bottom: 1px solid var(--border-color);
     box-shadow: var(--shadow-md);
+    padding: 0.75rem 0;
+    min-height: 60px;
+}
+
+.navbar .container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 36px; /* Match the height of buttons/inputs */
 }
 
 /* Remove the bg-primary override since we want it dark by default */
@@ -19,6 +28,14 @@
 .navbar-brand {
     color: var(--text-normal) !important;
     font-weight: 500;
+    padding: 0;
+    margin-right: 2rem;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+    margin: 0 2rem 0 0;
+    font-size: 1.25rem;
 }
 
 .navbar .btn-outline-light {
@@ -29,7 +46,7 @@
 .navbar .btn-outline-light:hover {
     background-color: var(--background-modifier-hover);
     border-color: var(--interactive-accent);
-    color: var(--interactive-accent);
+    color: var (--interactive-accent);
 }
 
 /* Add specific dark theme overrides */
@@ -41,6 +58,7 @@
     filter: invert(1);
 }
 
+/* Theme and Search Controls */
 .btn-icon {
     width: 36px;
     height: 36px;
@@ -52,9 +70,138 @@
     background-color: var(--background-modifier-hover);
     color: var(--text-normal);
     transition: all var(--transition-fast);
+    border: 1px solid transparent;
 }
 
 .btn-icon:hover {
     background-color: var(--interactive-accent);
     color: #ffffff;
+}
+
+/* Light theme overrides for buttons */
+:root[data-theme="light"] .btn-icon {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+    border-color: var(--border-color);
+}
+
+:root[data-theme="light"] .btn-icon:hover {
+    background-color: var(--interactive-accent);
+    color: #ffffff;
+    border-color: var(--interactive-accent);
+}
+
+/* Improve navbar collapse spacing */
+.navbar-collapse {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+}
+
+/* Adjust search container positioning */
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 400px;
+    height: 100%;
+    margin: 0 2rem;
+}
+
+/* Adjust spacing for nav links */
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Theme and Search Controls Group */
+.search-container .input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    height: 100%;
+}
+
+/* Hamburger Menu Styling */
+.navbar-toggler {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.navbar-toggler:hover, 
+.navbar-toggler[aria-expanded="true"] {
+    background-color: var(--background-modifier-hover);
+    border-color: var(--interactive-accent);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    transition: all var(--transition-fast);
+}
+
+/* Changed hamburger icon when open */
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M6 6L24 24M6 24L24 6'/%3e%3c/svg%3e");
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+    line-height: 1;  /* Add this to ensure text is centered */
+}
+
+@media (max-width: 992px) {
+    .navbar .container {
+        height: auto;
+        padding: 0 1rem;
+    }
+    
+    .nav-item, .nav-link {
+        height: auto;
+    }
+    
+    .navbar-brand,
+    .nav-link {
+        padding: 0.5rem 0;
+        height: 36px;
+    }
+    
+    .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--background-secondary);
+        padding: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .navbar-nav {
+        gap: 0;
+    }
+    
+    .nav-item {
+        width: 100%;
+    }
+    
+    /* Group buttons in mobile view */
+    .navbar-toggler,
+    #logoutButton {
+        height: 36px;
+        padding: 0 0.75rem;
+    }
 }

@@ -59,11 +59,15 @@
     --navbar-bg: var(--interactive-accent);
     --navbar-text: #ffffff;
     --navbar-hover: rgba(255, 255, 255, 0.9);
+
+    /* Navbar specific colors */
+    --navbar-link: rgba(255, 255, 255, 0.85);
+    --navbar-link-hover: #ffffff;
 }
 
 /* Light Theme Component Overrides */
 :root[data-theme="light"] .navbar {
-    background-color: var(--navbar-bg) !important;
+    background-color: var(--interactive-accent) !important;
 }
 
 :root[data-theme="light"] .btn-close {
@@ -113,4 +117,31 @@
 
 :root[data-theme="light"] .btn-icon:hover {
     background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Navbar Light Theme Overrides */
+:root[data-theme="light"] .navbar-brand,
+:root[data-theme="light"] .nav-link {
+    color: var(--navbar-link) !important;
+}
+
+:root[data-theme="light"] .navbar-brand:hover,
+:root[data-theme="light"] .nav-link:hover {
+    color: var(--navbar-link-hover) !important;
+}
+
+:root[data-theme="light"] .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme="light"] .navbar-toggler:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile view specific overrides */
+@media (max-width: 992px) {
+    :root[data-theme="light"] .navbar-collapse {
+        background-color: var(--interactive-accent);
+    }
 }
