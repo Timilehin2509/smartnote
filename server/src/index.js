@@ -10,12 +10,14 @@ import authRoutes from './routes/auth.js';
 import categoryRoutes from './routes/categories.js';
 import noteRoutes from './routes/notes.js';
 import searchRoutes from './routes/search.js';
+import userRoutes from './routes/user.js';
 
 // Frontend routes
 import frontendAuthRoutes from './routes/frontendRoutes/auth.js';
 import frontendNotesRoutes from './routes/frontendRoutes/notes.js';
 import frontendCategoriesRoutes from './routes/frontendRoutes/categories.js';
 import homeRoutes from './routes/frontendRoutes/home.js';
+import frontendUserRoutes from './routes/frontendRoutes/user.js';
 
 // Initialize Express app
 const app = express();
@@ -42,12 +44,14 @@ app.use('/', homeRoutes);
 app.use('/auth', frontendAuthRoutes);
 app.use('/notes', frontendNotesRoutes);
 app.use('/categories', frontendCategoriesRoutes);
+app.use('/user', frontendUserRoutes);
 
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/user', userRoutes);
 
 // Basic error handler
 app.use((err, req, res, next) => {
