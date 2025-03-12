@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Login form handler
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -20,15 +21,46 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(data.error || 'Login failed');
                 }
 
-                // Store auth data
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
-
-                // Redirect to notes page
                 window.location.href = '/notes';
             } catch (error) {
                 console.error('Login error:', error);
                 alert(error.message || 'Login failed');
+            }
+        });
+    }
+
+    // Logout form handler
+    const logoutForm = document.getElementById('logoutForm');
+    if (logoutForm) {
+        logoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Clear storage and redirect
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/auth/login';
+        });
+    }
+
+    // Logout button handler
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                // Attempt to logout on server
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                // Clear storage and redirect regardless of server response
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/auth/login';
             }
         });
     }

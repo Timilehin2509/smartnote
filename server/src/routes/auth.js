@@ -73,9 +73,8 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: "Email and password are required" });
         }
 
-        // Get user
         const [users] = await pool.execute(
-            'SELECT id, email, password FROM users WHERE email = ?',
+            'SELECT id, username, email, password FROM users WHERE email = ?',
             [email]
         );
 
@@ -97,9 +96,13 @@ router.post('/login', async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        res.json({ 
+        // Remove password from user object
+        const { password: _, ...userWithoutPassword } = user;
+
+        res.json({
             message: "Login successful",
-            token 
+            token,
+            user: userWithoutPassword
         });
     } catch (error) {
         console.error('Login error:', error);
