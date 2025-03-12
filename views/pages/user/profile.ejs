@@ -6,104 +6,112 @@
         </ol>
     </nav>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <!-- Profile Overview Card -->
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">My Profile</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-3 mb-4">
-                        <div class="user-avatar">
-                            <i class="bi bi-person-circle"></i>
-                        </div>
-                        <div>
-                            <h4 id="displayUsername" class="mb-1">Loading...</h4>
-                            <p class="text-muted mb-0" id="displayEmail">loading@email.com</p>
-                        </div>
-                    </div>
+    <div class="profile-header">
+        <div class="profile-info">
+            <div class="user-avatar">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            <div class="profile-meta">
+                <h4 id="displayUsername">Loading...</h4>
+                <p class="text-muted mb-0" id="displayEmail">loading@email.com</p>
+                <p class="text-muted mb-0">Member since <span id="memberSince">...</span></p>
+            </div>
+        </div>
 
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="bi bi-journal-text"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span id="notesCount">0</span>
-                                <small class="text-muted">Notes</small>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="bi bi-folder"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span id="categoriesCount">0</span>
-                                <small class="text-muted">Categories</small>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="bi bi-tags"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span id="tagsCount">0</span>
-                                <small class="text-muted">Tags</small>
-                            </div>
-                        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+                <div class="stat-info">
+                    <span id="notesCount">0</span>
+                    <small class="text-muted">Total Notes</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-folder"></i>
+                </div>
+                <div class="stat-info">
+                    <span id="categoriesCount">0</span>
+                    <small class="text-muted">Categories</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-tags"></i>
+                </div>
+                <div class="stat-info">
+                    <span id="tagsCount">0</span>
+                    <small class="text-muted">Tags Used</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-link-45deg"></i>
+                </div>
+                <div class="stat-info">
+                    <span id="linkedNotesCount">0</span>
+                    <small class="text-muted">Connected Notes</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="activity-section">
+                <h5 class="mb-3">Recent Activity</h5>
+                <div class="card">
+                    <div class="list-group list-group-flush" id="recentActivity">
+                        <!-- Activity items will be populated here -->
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Profile Settings Card -->
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Profile Settings</h5>
-                    <div id="saveIndicator" class="text-success" style="display: none;">
-                        <i class="bi bi-check-circle-fill"></i> Changes saved
+        <div class="col-md-4">
+            <div class="settings-section">
+                <div class="setting-group">
+                    <div class="setting-header">
+                        <i class="bi bi-person"></i>
+                        <h6 class="mb-0">Account Settings</h6>
                     </div>
-                </div>
-                <div class="card-body">
                     <form id="profileForm">
-                        <div class="setting-group mb-4">
+                        <div class="mb-3">
                             <label class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
+                            <input type="text" class="form-control" id="username" required>
                         </div>
-
-                        <div class="setting-group mb-4">
+                        <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" readonly>
                             <small class="text-muted">Email cannot be changed</small>
                         </div>
-
-                        <div class="setting-group mb-4">
-                            <label class="form-label">Password</label>
-                            <button type="button" class="btn btn-outline-secondary w-100" id="togglePassword">
-                                Change Password
-                            </button>
-                            <div id="passwordFields" class="mt-3" style="display: none;">
-                                <div class="mb-3">
-                                    <label class="form-label">Current Password</label>
-                                    <input type="password" class="form-control" id="currentPassword">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">New Password</label>
-                                    <input type="password" class="form-control" id="newPassword">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="button" class="btn btn-outline-danger" id="deleteAccount">
-                                Delete Account
-                            </button>
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-outline-secondary" id="cancelChanges">Cancel</button>
-                                <button type="submit" class="btn btn-primary" id="saveChanges">Save Changes</button>
-                            </div>
-                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
                     </form>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-header">
+                        <i class="bi bi-shield-lock"></i>
+                        <h6 class="mb-0">Security</h6>
+                    </div>
+                    <button class="btn btn-outline-secondary w-100 mb-2" id="togglePassword">
+                        Change Password
+                    </button>
+                    <div id="passwordFields" style="display: none;">
+                        <!-- Password fields here -->
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-header">
+                        <i class="bi bi-trash"></i>
+                        <h6 class="mb-0">Danger Zone</h6>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger w-100" id="deleteAccount">
+                        Delete Account
+                    </button>
                 </div>
             </div>
         </div>

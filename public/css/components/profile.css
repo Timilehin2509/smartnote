@@ -1,19 +1,19 @@
 /* User Profile Components */
 .user-avatar {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--background-modifier-hover);
+    background: linear-gradient(45deg, var(--interactive-accent), var(--interactive-accent-hover));
     border-radius: 50%;
-    border: 2px solid var(--interactive-accent);
+    box-shadow: var(--shadow-md);
     transition: all var(--transition-fast);
 }
 
 .user-avatar i {
-    font-size: 40px;
-    color: var(--interactive-accent);
+    font-size: 42px;
+    color: #ffffff;
 }
 
 /* Profile Overview */
@@ -23,16 +23,18 @@
     background: var(--background-secondary-alt);
     border-radius: 12px;
     margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
 }
 
 .profile-info {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 .profile-meta h4 {
-    margin-bottom: 0.25rem;
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
     color: var(--text-normal);
 }
 
@@ -44,36 +46,38 @@
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-top: 2.5rem;
 }
 
 .stat-card {
-    background-color: var(--background-secondary);
+    background: var(--background-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    border-radius: 12px;
+    padding: 1.5rem;
     transition: all var(--transition-fast);
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
-    border-color: var(--interactive-accent);
     box-shadow: var(--shadow-md);
+    border-color: var(--interactive-accent);
 }
 
 .stat-icon {
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--background-modifier-hover);
+    background: var(--background-modifier-hover);
     border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.stat-icon i {
+    font-size: 24px;
     color: var(--interactive-accent);
 }
 
@@ -83,8 +87,10 @@
 }
 
 .stat-info span {
-    font-size: 1.5rem;
+    display: block;
+    font-size: 1.75rem;
     font-weight: 600;
+    margin-bottom: 0.25rem;
     color: var(--text-normal);
     line-height: 1;
 }
@@ -96,14 +102,18 @@
 
 /* Settings Section */
 .settings-section {
+    margin-top: 2rem;
     background: var(--background-secondary);
     border-radius: 12px;
     border: 1px solid var(--border-color);
 }
 
 .setting-group {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
     padding: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
     transition: all var(--transition-fast);
 }
 
@@ -112,7 +122,7 @@
 }
 
 .setting-group:hover {
-    background-color: var(--background-secondary-alt);
+    background: var(--background-secondary-alt);
 }
 
 .setting-group label {
@@ -122,6 +132,18 @@
 
 .setting-group small {
     color: var(--text-muted);
+}
+
+.setting-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.setting-header i {
+    font-size: 1.25rem;
+    color: var(--interactive-accent);
 }
 
 /* Password Fields Animation */
@@ -150,6 +172,29 @@
     opacity: 1;
 }
 
+/* Recent Activity Section */
+.activity-section {
+    margin-top: 2rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.activity-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-modifier-hover);
+    border-radius: 8px;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .profile-info {
@@ -158,10 +203,16 @@
     }
     
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .setting-group {
         padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 }
