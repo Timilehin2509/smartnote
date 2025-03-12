@@ -1,7 +1,6 @@
 class ProfileManager {
     constructor() {
         this.init();
-        this.originalData = null;
     }
 
     async init() {
@@ -33,10 +32,10 @@ class ProfileManager {
             const profile = await profileResponse.json();
             const stats = await statsResponse.json();
 
-            this.originalData = profile;
             this.updateDisplay(profile, stats);
         } catch (error) {
             console.error('Error loading user data:', error);
+            this.showError('Failed to load user data');
         }
     }
 
@@ -46,44 +45,41 @@ class ProfileManager {
         document.getElementById('displayEmail').textContent = profile.email;
         document.getElementById('username').value = profile.username;
         document.getElementById('email').value = profile.email;
+        document.getElementById('memberSince').textContent = new Date(profile.created_at).toLocaleDateString();
 
         // Update stats
-        document.getElementById('notesCount').textContent = stats.notes;
-        document.getElementById('categoriesCount').textContent = stats.categories;
-        document.getElementById('tagsCount').textContent = stats.tags;
+        document.getElementById('notesCount').textContent = stats.notes || 0;
+        document.getElementById('categoriesCount').textContent = stats.categories || 0;
+        document.getElementById('tagsCount').textContent = stats.tags || 0;
+        document.getElementById('linkedNotesCount').textContent = stats.linkedNotes || 0;
     }
 
     setupEventListeners() {
+        // Profile form submission
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.updateProfile();
+        });
+
         // Password toggle
         document.getElementById('togglePassword').addEventListener('click', () => {
             const fields = document.getElementById('passwordFields');
             fields.style.display = fields.style.display === 'none' ? 'block' : 'none';
         });
 
-        // Form submission
-        document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await this.saveChanges();
-        });
-
-        // Cancel changes
-        document.getElementById('cancelChanges').addEventListener('click', () => {
-            this.resetForm();
-        });
-
         // Delete account
         document.getElementById('deleteAccount').addEventListener('click', () => {
-            this.confirmDelete();
+            this.confirmDeleteAccount();
         });
     }
 
-    async saveChanges() {
+    async updateProfile() {
         try {
+            const token = localStorage.getItem('token');
             const username = document.getElementById('username').value;
             const currentPassword = document.getElementById('currentPassword')?.value;
             const newPassword = document.getElementById('newPassword')?.value;
 
-            const token = localStorage.getItem('token');
             const response = await fetch('/api/user/profile', {
                 method: 'PUT',
                 headers: {
@@ -91,77 +87,73 @@ class ProfileManager {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    username: username.trim(),
+                    username,
                     currentPassword,
                     newPassword
                 })
             });
 
             if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Failed to update profile');
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to update profile');
             }
 
-            // Update localStorage user data
-            const user = JSON.parse(localStorage.getItem('user'));
-            user.username = username.trim();
-            localStorage.setItem('user', JSON.stringify(user));
-
-            this.showSuccess();
             await this.loadUserData();
-            this.resetPasswordFields();
+            document.getElementById('passwordFields').style.display = 'none';
+            this.showSuccess('Profile updated successfully');
         } catch (error) {
+            console.error('Update profile error:', error);
             this.showError(error.message);
         }
     }
 
-    resetForm() {
-        document.getElementById('username').value = this.originalData.username;
-        this.resetPasswordFields();
-    }
-
-    resetPasswordFields() {
-        document.getElementById('passwordFields').style.display = 'none';
-        document.getElementById('currentPassword').value = '';
-        document.getElementById('newPassword').value = '';
-    }
-
-    showSuccess() {
-        const indicator = document.getElementById('saveIndicator');
-        indicator.style.display = 'flex';
-        setTimeout(() => {
-            indicator.style.display = 'none';
-        }, 3000);
-    }
-
-    showError(message) {
-        // You can enhance this with a proper error display
-        alert(message);
-    }
-
-    async confirmDelete() {
-        const confirmed = confirm(
-            'Are you sure you want to delete your account? This action cannot be undone and will delete all your notes, categories, and data.'
-        );
-
-        if (!confirmed) return;
+    async confirmDeleteAccount() {
+        if (!confirm('Are you sure you want to delete your account? This action cannot be undone and will delete all your notes, categories, and data.')) {
+            return;
+        }
 
         try {
             const token = localStorage.getItem('token');
             const response = await fetch('/api/user/profile', {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
-            if (!response.ok) throw new Error('Failed to delete account');
+            if (!response.ok) {
+                throw new Error('Failed to delete account');
+            }
 
-            // Clear local storage and redirect
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/auth/login';
         } catch (error) {
+            console.error('Delete account error:', error);
             this.showError(error.message);
         }
+    }
+
+    showSuccess(message) {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible fade show';
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').prepend(alert);
+        setTimeout(() => alert.remove(), 3000);
+    }
+
+    showError(message) {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger alert-dismissible fade show';
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').prepend(alert);
+        setTimeout(() => alert.remove(), 3000);
     }
 }
 

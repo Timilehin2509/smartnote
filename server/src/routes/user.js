@@ -24,10 +24,9 @@ router.get('/profile', authMiddleware, async (req, res) => {
     }
 });
 
-// Get user stats
+// Update the stats route
 router.get('/stats', authMiddleware, async (req, res) => {
     try {
-        // Get counts in parallel
         const [notesCount] = await pool.execute(
             'SELECT COUNT(*) as count FROM notes WHERE user_id = ?',
             [req.user.id]
@@ -43,10 +42,19 @@ router.get('/stats', authMiddleware, async (req, res) => {
             [req.user.id]
         );
 
+        // Add linked notes count
+        const [linkedNotesCount] = await pool.execute(
+            `SELECT COUNT(*) as count FROM note_links nl 
+             INNER JOIN notes n ON (nl.source_id = n.id OR nl.target_id = n.id) 
+             WHERE n.user_id = ?`,
+            [req.user.id]
+        );
+
         res.json({
             notes: notesCount[0].count,
             categories: categoriesCount[0].count,
-            tags: tagsResult[0].count
+            tags: tagsResult[0].count,
+            linkedNotes: linkedNotesCount[0].count
         });
     } catch (error) {
         console.error('Get stats error:', error);
@@ -119,6 +127,56 @@ router.delete('/profile', authMiddleware, async (req, res) => {
         res.status(500).json({ error: "Failed to delete account" });
     } finally {
         if (connection) connection.release();
+    }
+});
+
+// Get user preferences/settings
+router.get('/preferences', authMiddleware, async (req, res) => {
+    try {
+        const [preferences] = await pool.execute(
+            'SELECT default_theme, created_at FROM users WHERE id = ?',
+            [req.user.id]
+        );
+        res.json(preferences[0]);
+    } catch (error) {
+        console.error('Get preferences error:', error);
+        res.status(500).json({ error: "Failed to fetch user preferences" });
+    }
+});
+
+// Get user activity
+router.get('/activity', authMiddleware, async (req, res) => {
+    try {
+        const [activities] = await pool.execute(`
+            SELECT 'note' as type, title, 'created' as action, created_at as date
+            FROM notes 
+            WHERE user_id = ?
+            UNION ALL
+            SELECT 'note' as type, title, 'updated' as action, updated_at as date
+            FROM notes 
+            WHERE user_id = ? AND updated_at != created_at
+            ORDER BY date DESC
+            LIMIT 10
+        `, [req.user.id, req.user.id]);
+
+        res.json(activities);
+    } catch (error) {
+        console.error('Get activity error:', error);
+        res.status(500).json({ error: "Failed to fetch user activity" });
+    }
+});
+
+// Get linked notes count
+router.get('/linked-notes', authMiddleware, async (req, res) => {
+    try {
+        const [result] = await pool.execute(
+            'SELECT COUNT(*) as count FROM note_links WHERE source_id IN (SELECT id FROM notes WHERE user_id = ?)',
+            [req.user.id]
+        );
+        res.json({ linkedNotes: result[0].count });
+    } catch (error) {
+        console.error('Get linked notes error:', error);
+        res.status(500).json({ error: "Failed to fetch linked notes count" });
     }
 });
 
