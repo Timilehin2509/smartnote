@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    updateAuthUI();
+
     // Login form handler
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
@@ -11,6 +13,23 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', handleLogout);
     }
 });
+
+function updateAuthUI() {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const isAuthenticated = !!token;
+
+    // Toggle body class for auth state
+    document.body.classList.toggle('authenticated', isAuthenticated);
+
+    // Update username if logged in
+    if (isAuthenticated && user) {
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        if (usernameDisplay) {
+            usernameDisplay.textContent = user.username;
+        }
+    }
+}
 
 async function handleLogin(e) {
     e.preventDefault();
@@ -39,5 +58,15 @@ async function handleLogin(e) {
 async function handleLogout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    document.body.classList.remove('authenticated');
     window.location.replace('/auth/login');
+}
+
+// Add utility functions for auth state checks
+function isAuthenticated() {
+    return !!localStorage.getItem('token');
+}
+
+function getCurrentUser() {
+    return JSON.parse(localStorage.getItem('user') || 'null');
 }

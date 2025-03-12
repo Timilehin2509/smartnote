@@ -164,6 +164,49 @@
     line-height: 1;  /* Add this to ensure text is centered */
 }
 
+/* Auth State Visibility */
+.guest-only {
+    display: none;
+}
+
+.auth-required {
+    display: none;
+}
+
+/* When logged in */
+body.authenticated .auth-required {
+    display: flex;
+}
+
+body.authenticated .guest-only {
+    display: none;
+}
+
+/* When logged out */  
+body:not(.authenticated) .guest-only {
+    display: flex;
+}
+
+body:not(.authenticated) .auth-required {
+    display: none;
+}
+
+/* Ensure proper alignment in both states */
+.navbar .container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 36px;
+}
+
+.navbar-brand {
+    margin-right: auto; /* Push other items to the right when guest */
+}
+
+body.authenticated .navbar-brand {
+    margin-right: 2rem; /* Normal spacing when authenticated */
+}
+
 @media (max-width: 992px) {
     .navbar .container {
         height: auto;
